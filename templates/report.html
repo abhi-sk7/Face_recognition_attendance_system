@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% block body %}
+<div class="card">
+<h2>Attendance Report</h2>
+<form method="get">
+ From <input type="date" name="start" value="{{ start }}"> To <input type="date" name="end" value="{{ end }}">
+ <button>Show</button>
+ <a class="btn" href="/report/download?start={{ start }}&end={{ end }}">Download Excel</a>
+</form></div>
+
+<div class="card"><h3>Summary</h3>
+<table><tr><th>Name</th><th>ID</th><th>Present</th><th>Late</th><th>Half Day</th><th>Absent</th></tr>
+{% for s in summary %}<tr><td>{{ s.name }}</td><td>{{ s.code }}</td><td>{{ s.Present }}</td><td>{{ s.Late }}</td><td>{{ s["Half Day"] }}</td><td>{{ s.Absent }}</td></tr>{% endfor %}
+</table></div>
+
+<div class="card"><h3>Day-wise</h3>
+<table><tr><th>Date</th><th>Name</th><th>ID</th><th>In</th><th>Out</th><th>Hours</th><th>Status</th></tr>
+{% for r in rows %}<tr><td>{{ r.date }}</td><td>{{ r.name }}</td><td>{{ r.code }}</td><td>{{ r.check_in }}</td><td>{{ r.check_out }}</td><td>{{ r.hours }}</td>
+<td class="{{ r.status.split()[0] }}">{{ r.status }}</td></tr>{% endfor %}
+</table></div>{% endblock %}

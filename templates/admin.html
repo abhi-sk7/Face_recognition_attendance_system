@@ -1,0 +1,86 @@
+{% extends "base.html" %}{% block body %}
+<div class="card">
+<h2>Naya Employee Add Karein</h2>
+<input id="name" placeholder="Name"> <input id="code" placeholder="Employee ID">
+<input id="pwd" type="password" placeholder="Password"><br>
+<img src="/video_feed" alt="Live camera feed" style="width:100%;max-width:640px;border-radius:6px;margin-top:8px"><br>
+<button id="btn" onclick="scan()">Scan karke Save</button>
+<p id="msg"></p>
+<small>Har pose screen par dikhne par us disha mein dekhein. Bahut side profile na karein.</small>
+</div>
+
+<div class="card"><h3>Aaj ki Attendance</h3>
+<table><tr><th>Name</th><th>Check In</th><th>Check Out</th></tr>
+{% for t in today %}<tr><td>{{ t.name }}</td><td>{{ t.check_in }}</td><td>{{ t.check_out or '-' }}</td></tr>{% else %}<tr><td colspan=3>Abhi koi nahi</td></tr>{% endfor %}
+</table></div>
+
+<div class="card"><h3>Registered Employees ({{ emps|length }})</h3>
+<table><tr><th>Name</th><th>ID</th><th></th></tr>
+{% for e in emps %}<tr><td>{{ e.name }}</td><td>{{ e.emp_code }}</td>
+<td><button type="button" onclick="scan({{ e.id }},this)">Face Update</button>
+<form method="post" action="/delete/{{ e.id }}" onsubmit="return confirm('Delete {{ e.name }}? Uski attendance bhi delete hogi.')"><button class="red">Delete</button></form></td></tr>{% endfor %}
+</table></div>
+
+<div class="card"><h3>Office Settings</h3>
+<form method="post" action="/settings">
+ Office start (HH:MM) <input name="office_start" value="{{ s.office_start }}" size=6><br>
+ Grace minutes <input name="grace_min" value="{{ s.grace_min }}" size=4><br>
+ Half-day: iske baad check-in (HH:MM) <input name="half_day_after" value="{{ s.half_day_after }}" size=6><br>
+ Half-day: kam se kam ghante <input name="half_day_hours" value="{{ s.half_day_hours }}" size=4><br>
+ Weekly off (0=Mon ... 6=Sun, comma se) <input name="weekly_off" value="{{ s.weekly_off }}" size=6><br>
+ <button>Save</button>
+</form></div>
+
+<script>
+async function scan(employeeId=null, trigger=document.getElementById("btn")){
+  const msg=document.getElementById("msg"), btn=trigger;
+  btn.disabled=true;
+  try{
+    const token=crypto.randomUUID();
+    const poses=[
+      "Seedha camera dekhein",
+      "Sar dheere LEFT ghumayein",
+      "Sar dheere RIGHT ghumayein",
+      "Thoda UPAR dekhein",
+      "Thoda NEECHE dekhein",
+      "Seedha dekhein aur muskuraein"
+    ];
+    for(let pose=0;pose<poses.length;pose++){
+      msg.innerText=poses[pose];
+      await new Promise(resolve=>setTimeout(resolve,2200));
+      for(let sample=0;sample<3;sample++){
+        const response=await fetch("/enroll_capture",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({token})
+        });
+        const result=await response.json();
+        if(!response.ok) throw new Error(result.msg||"Face sample capture nahi hua.");
+        msg.innerText=`${poses[pose]} (${result.n} samples)`;
+        if(sample<2) await new Promise(resolve=>setTimeout(resolve,450));
+      }
+    }
+    msg.innerText="Face samples save ho rahe hain...";
+    const payload={token};
+    if(!employeeId){
+      payload.name=document.getElementById("name").value;
+      payload.emp_code=document.getElementById("code").value;
+      payload.password=document.getElementById("pwd").value;
+    }else{
+      payload.employee_id=employeeId;
+    }
+    const response=await fetch("/enroll",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(payload)
+    });
+    const result=await response.json();
+    msg.innerText=result.msg;
+    if(result.ok) setTimeout(()=>location.reload(),1200);
+  }catch(e){
+    msg.innerText="Scan nahi ho paya: "+e.message;
+  }finally{
+    btn.disabled=false;
+  }
+}
+</script>{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block body %}
+<div class="card" style="max-width:360px;margin:60px auto">
+<h2>Login</h2>
+{% for m in get_flashed_messages() %}<div class="flash">{{ m }}</div>{% endfor %}
+<form method="post">
+ <input name="u" placeholder="Admin username / Employee ID" required style="width:92%"><br>
+ <input name="p" type="password" placeholder="Password" required style="width:92%"><br><br>
+ <button>Login</button>
+</form></div>{% endblock %}

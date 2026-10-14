@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% block body %}
+<div class="card"><h2>Meri Attendance</h2>
+<form method="get">From <input type="date" name="start" value="{{ start }}"> To <input type="date" name="end" value="{{ end }}"><button>Show</button></form>
+{% for s in summary %}<p>Present: <b>{{ s.Present }}</b> | Late: <b>{{ s.Late }}</b> | Half Day: <b>{{ s["Half Day"] }}</b> | Absent: <b>{{ s.Absent }}</b></p>{% endfor %}
+<table><tr><th>Date</th><th>In</th><th>Out</th><th>Hours</th><th>Status</th></tr>
+{% for r in rows %}<tr><td>{{ r.date }}</td><td>{{ r.check_in }}</td><td>{{ r.check_out }}</td><td>{{ r.hours }}</td><td class="{{ r.status.split()[0] }}">{{ r.status }}</td></tr>{% endfor %}
+</table></div>
+<p><a href="/logout">Logout</a></p>{% endblock %}

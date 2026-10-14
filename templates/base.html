@@ -1,0 +1,23 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Face Attendance</title>
+<style>
+ body{font-family:Arial,sans-serif;margin:0;background:#f4f6f8;color:#222}
+ nav{background:#1f2d3d;padding:12px 20px;display:flex;gap:18px;align-items:center}
+ nav a{color:#fff;text-decoration:none} nav b{color:#7dd3fc;margin-right:auto}
+ .wrap{max-width:1000px;margin:20px auto;padding:0 14px}
+ .card{background:#fff;border-radius:8px;padding:16px;margin-bottom:16px;box-shadow:0 1px 3px #0002}
+ input,select{padding:8px;margin:4px 4px 4px 0;border:1px solid #bbb;border-radius:4px}
+ button,.btn{padding:8px 14px;background:#2563eb;color:#fff;border:0;border-radius:4px;cursor:pointer;text-decoration:none;display:inline-block}
+ button.red{background:#dc2626}
+ table{border-collapse:collapse;width:100%} th,td{border-bottom:1px solid #e5e7eb;padding:8px;text-align:left;font-size:14px}
+ th{background:#f1f5f9}
+ .Present{color:#16a34a} .Late{color:#d97706} .Absent{color:#dc2626} .Half{color:#7c3aed}
+ .flash{background:#fee2e2;padding:10px;border-radius:4px;margin-bottom:10px}
+</style></head><body>
+<nav><b>Face Attendance</b>
+{% if session.admin %}<a href="/admin">Admin</a><a href="/live">Live Camera</a><a href="/report">Report</a>{% endif %}
+{% if session.admin or session.emp_id %}<a href="/logout">Logout</a>{% endif %}
+</nav>
+<div class="wrap">{% block body %}{% endblock %}</div>
+</body></html>

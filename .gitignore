@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+attendance.db
+attendance.db-*
+config.py
+.venv/
+venv/
+.insightface/
